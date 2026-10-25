@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DY科技 - 赋能极致游戏体验</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='white'/><text x='50' y='72' font-family='Arial' font-weight='900' font-size='50' fill='black' text-anchor='middle'>DY</text></svg>">
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --bg: #0A0A0A;
+            --text: #FFFFFF;
+            --danger: #FF3B30;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body {
+            background-color: var(--bg); color: var(--text);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; overflow-x: hidden;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .navbar {
+            width: 100%; padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(10px);
+            position: fixed; top: 0; z-index: 100; border-bottom: 1px solid #222;
+        }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; }
+        .logo span { color: var(--primary); }
+        .nav-links a { color: #AAA; text-decoration: none; margin-left: 20px; font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
+
+        .hero {
+            margin-top: 100px; text-align: center; padding: 40px 20px;
+            background: radial-gradient(circle at center, rgba(74,144,226,0.15) 0%, transparent 70%);
+            width: 100%; max-width: 800px;
+        }
+        .hero h1 { font-size: 42px; margin-bottom: 20px; line-height: 1.2; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .hero h1 span { color: var(--primary); text-shadow: 0 0 20px rgba(74,144,226,0.8); }
+        .hero p { font-size: 16px; color: #888; margin-bottom: 40px; }
+        
+        .download-btn {
+            background: linear-gradient(90deg, #4A90E2, #5C6BC0);
+            color: white; border: none; padding: 18px 50px;
+            font-size: 20px; font-weight: bold; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(74, 144, 226, 0.4);
+            transition: transform 0.2s; display: inline-flex; align-items: center; gap: 10px;
+        }
+        .download-btn:hover { transform: translateY(-3px); }
+        
+        .features {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; width: 100%; max-width: 900px; padding: 40px 20px; margin-top: 20px;
+        }
+        .feature-card {
+            background: #1A1A1A; border: 1px solid #333; padding: 30px 20px;
+            border-radius: 15px; text-align: center; transition: 0.3s;
+        }
+        .feature-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .feature-card h3 { font-size: 18px; margin-bottom: 10px; color: var(--primary); }
+        .feature-card p { font-size: 13px; color: #777; line-height: 1.6; }
+
+        .footer {
+            margin-top: auto; padding: 30px 20px; text-align: center;
+            font-size: 12px; color: #444; line-height: 1.8;
+            border-top: 1px solid #222; width: 100%;
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center;
+            z-index: 1000; backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: #1C1C1E; width: 85%; max-width: 350px;
+            border-radius: 15px; padding: 25px; text-align: center;
+            border: 1px solid #333; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .modal-title { font-size: 20px; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        .modal-text { font-size: 14px; color: #CCC; line-height: 1.6; margin-bottom: 20px; text-align: left;}
+        .modal-btn {
+            background: linear-gradient(90deg, #4A90E2, #5C6BC0); color: white; border: none;
+            width: 100%; padding: 12px; border-radius: 8px;
+            font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(74,144,226,0.3);
+        }
+        .modal-title.warning { color: var(--danger); }
+        .modal-btn.warning { background: var(--danger); box-shadow: 0 4px 15px rgba(255,59,48,0.3); }
+    </style>
+</head>
+<body onload="showUpdateLog()">
+
+    <div class="navbar">
+        <div class="logo">DY<span> TECH</span></div>
+        <div class="nav-links">
+            <a href="#">首页</a>
+            <a href="https://hvue91.github.io/DY-External-plugins-assistants/">卡密购买</a>
+            <a href="https://space.bilibili.com/3546681423431692" target="_blank">关于我们</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1>重塑游戏边界<br><span>DY 内核驱动版</span></h1>
+        <p>底层硬件级伪装 · 无视一切反作弊 · 稳定奔放不拉闸</p>
+        <button class="download-btn" onclick="startDownload()">
+            <span>⬇️</span> 立即下载最新版 V9.0
+        </button>
+        <p style="font-size: 12px; color: #555; margin-top: 15px;">支持 Android 8.0 及以上系统</p>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <h3>🛡️ 稳过 ACE 检测</h3>
+            <p>采用最新一代驱动级内存读写技术，配合动态特征码混淆，彻底告别十年大礼包。</p>
+        </div>
+        <div class="feature-card">
+            <h3>🎯 骨骼自瞄矩阵</h3>
+            <p>毫秒级响应，自动锁定敌方头部、胸部。支持自定义平滑度，演技逼真如大神。</p>
+        </div>
+        <div class="feature-card">
+            <h3>👁️ 全图上帝视角</h3>
+            <p>物资、载具、敌人位置实时显示。自带距离预警，让你永远快人一步。</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        Copyright © 2026 DY TECH. All Rights Reserved.<br>
+        本软件仅供内部技术交流与学习，请在下载后24小时内删除。<br>
+        严禁将本程序用于任何商业或非法用途，否则后果自负。
+    </div>
+
+    <!-- 弹窗1：软件更新公告（已修改为外挂专属文案） -->
+    <div class="modal-overlay active" id="update-modal">
+        <div class="modal-content">
+            <div class="modal-title">📢 DY 内核 V9.0 更新公告</div>
+            <div class="modal-text" style="font-size: 13px;">
+                <b>【本次内核重大更新】</b><br>
+                1. 重构底层驱动，完美绕过 ACE 最新赛季特征库检测，大幅降低十年风险。<br>
+                2. 优化自瞄矩阵算法，新增“微自瞄防人工巡查”模式，演技更逼真。<br>
+                3. 修复了部分安卓 14 系统设备上，灵动岛悬浮窗被游戏遮挡的 Bug。<br>
+                4. 重新编译了防闪退加固模块，解决局内秒刷偶尔卡顿的问题。<br><br>
+                <span style="color: #FF9800;">* 请务必卸载旧版本后再安装最新版，旧版已停止维护并极易拉闸。</span>
+            </div>
+            <button class="modal-btn" onclick="closeUpdateLog()">同意并进入官网</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="download-modal">
+        <div class="modal-content">
+            <div class="modal-title warning">⚠️ 安全警告</div>
+            <div class="modal-text">
+                检测到您正在下载内部破解版内核。<br><br>
+                由于本软件涉及底层修改，<b>部分手机自带的安全中心/杀毒软件会误报为病毒</b>。<br><br>
+                请在下载安装时选择“继续安装”或“信任此应用”。<br><br>
+                安装完成后，请打开软件输入卡密激活。
+            </div>
+            <button class="modal-btn warning" onclick="doDownload()">我已了解，继续下载</button>
+        </div>
+    </div>
+
+    <script>
+        function closeUpdateLog() {
+            document.getElementById('update-modal').classList.remove('active');
+        }
+
+        function startDownload() {
+            document.getElementById('download-modal').classList.add('active');
+        }
+
+        function doDownload() {
+            const btn = document.querySelector('#download-modal .modal-btn');
+            btn.innerText = "正在建立高速下载通道...";
+            btn.style.opacity = "0.7";
+            
+            setTimeout(() => {
+                btn.innerText = "正在下载...";
+                window.location.href = "dy_cheat.apk"; 
+                
+                setTimeout(() => {
+                    document.getElementById('download-modal').classList.remove('active');
+                    btn.innerText = "我已了解，继续下载";
+                    btn.style.opacity = "1";
+                }, 3000);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
